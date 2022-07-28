@@ -1,41 +1,56 @@
 const express = require('express');
-const { parsed } = require('dotenv').config();
 const cors = require('cors');
+
+const { dbConnection } = require('../database/config');
 
 class Server {
 
     constructor() {
-        this.app = express();
-        this.port = parsed.PORT;
+        this.app  = express();
+        this.port = process.env.PORT;
         this.usuariosPath = '/api/usuarios';
-        //Midelwares
-        this.middlewares();
-        //Rutas de la aplicacion
-        this.routes();
 
+        // Conectar a base de datos
+        this.conectarDB();
+
+        // Middlewares
+        this.middlewares();
+
+        // Rutas de mi aplicación
+        this.routes();
     }
 
+    async conectarDB() {
+        await dbConnection();
+    }
+
+
     middlewares() {
-        //CORS
+
+        // CORS
         this.app.use( cors() );
 
-        //BodyParser
+        // Lectura y parseo del body
         this.app.use( express.json() );
 
-        //Directorio publico
+        // Directorio Público
         this.app.use( express.static('public') );
 
     }
 
     routes() {
-        this.app.use(this.usuariosPath, require('../routes/user'));
+        this.app.use( this.usuariosPath, require('../routes/usuarios'));
     }
 
     listen() {
-        this.app.listen(this.port, () => {
-            console.log(`Aplicacion corriendo en el puerto !`, this.port);
+        this.app.listen( this.port, () => {
+            console.log('Servidor corriendo en puerto', this.port );
         });
     }
+
 }
+
+
+
 
 module.exports = Server;
