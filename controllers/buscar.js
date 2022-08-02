@@ -17,7 +17,6 @@ const buscarUsuarios = async (termino = '', res = response) => {
     });
     res.json( { results:usuarios } );
 };
-
 const buscarProductos = async (termino = '', res = response) => {
     if(ObjectId.isValid(termino)){
         const producto = await Producto.findById(termino).populate('categoria','nombre');
@@ -56,8 +55,6 @@ const buscar = (req, res = response) => {
         case 'categorias':
              buscarCategorias(termino, res);
              break;
-        case 'roles':
-            return buscarRoles(termino, res);
         default:
             return res.status(400).json({ msg: 'No se encontraron coincidencias' });
     }
